@@ -1,7 +1,7 @@
 ---
 name: reviewer
 description: 统一审查 agent。逐维度检查正文的设定一致性、时间线、叙事连贯、角色一致性、逻辑，输出结构化问题清单。
-tools: Read, Grep, Bash
+tools: read_text, shell_executor
 model: inherit
 color: yellow
 ---
@@ -18,9 +18,8 @@ color: yellow
 
 ## 2. 可用工具与脚本
 
-- `Read`：读取正文、设定集、记忆数据
-- `Grep`：在正文中搜索关键词
-- `Bash`：调用记忆模块查询
+- `read_text`：读取正文、设定集、记忆数据
+- `shell_executor`：执行脚本、搜索关键词、调用记忆模块查询
 
 ```bash
 # 查询角色当前状态

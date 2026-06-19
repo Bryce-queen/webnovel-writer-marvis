@@ -57,7 +57,7 @@ RAG 检索需在书项目根目录配置 `.env`（缺失时自动退回 BM25 关
 
 ```bash
 # 路径 / 项目根 / Story System 健康预检
-python -X utf8 "<CLAUDE_PLUGIN_ROOT>/scripts/webnovel.py" --project-root "<PROJECT_ROOT>" preflight
+python -X utf8 "{SKILL_ROOT}/scripts/webnovel.py" --project-root "{PROJECT_ROOT}" preflight
 
 # 提示词与数据链测试
 python -m pytest -q --no-cov

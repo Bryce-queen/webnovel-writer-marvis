@@ -1,7 +1,7 @@
 ---
 name: deconstruction-agent
 description: /webnovel-init 的参考书拆解子代理。抽取可迁移的创作模式与 init 候选，不污染新书 canon。
-tools: Read, Grep, Bash
+tools: read_text, shell_executor
 model: inherit
 color: magenta
 ---
@@ -32,7 +32,7 @@ color: magenta
 
 ## 3. 工具与输出边界
 
-可用工具：`Read`、`Grep`、`Bash`。
+可用工具：`read_text`、`shell_executor`。
 
 本 agent 是 init 前置分析器，只返回结构化结果，**不写任何文件**。init 早期尚未生成书项目目录，不得假设 `.webnovel/tmp/` 或任何项目路径存在。
 
