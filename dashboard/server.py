@@ -22,15 +22,19 @@ def _resolve_project_root(cli_root: str | None) -> Path:
     if env:
         return Path(env).resolve()
 
-    # 尝试从 .claude 指针读取
+    # 尝试从指针文件读取（Marvis 优先，Claude Code 兜底）
     cwd = Path.cwd()
-    pointer = cwd / ".claude" / ".webnovel-current-project"
-    if pointer.is_file():
-        target = pointer.read_text(encoding="utf-8").strip()
-        if target:
-            p = Path(target)
-            if p.is_dir() and (p / ".webnovel" / "state.json").is_file():
-                return p.resolve()
+    pointer_candidates = [
+        cwd / ".webnovel-current-project",             # Marvis 工作区 pointer（无 .claude/ 中间层）
+        cwd / ".claude" / ".webnovel-current-project",  # Claude Code 指针
+    ]
+    for pointer in pointer_candidates:
+        if pointer.is_file():
+            target = pointer.read_text(encoding="utf-8").strip()
+            if target:
+                p = Path(target)
+                if p.is_dir() and (p / ".webnovel" / "state.json").is_file():
+                    return p.resolve()
 
     # 最终兜底：当前目录
     if (cwd / ".webnovel" / "state.json").is_file():

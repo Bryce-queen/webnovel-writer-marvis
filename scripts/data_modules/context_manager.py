@@ -334,8 +334,13 @@ class ContextManager:
         primary_genre = genres[0]
         secondary_genres = genres[1:]
         composite = len(genres) > 1
-        profile_path = self.config.project_root / ".claude" / "references" / "genre-profiles.md"
-        taxonomy_path = self.config.project_root / ".claude" / "references" / "reading-power-taxonomy.md"
+        # Marvis 优先：项目根 references/ 直接读；Claude Code 兜底：.claude/references/
+        profile_path = self.config.project_root / "references" / "genre-profiles.md"
+        if not profile_path.exists():
+            profile_path = self.config.project_root / ".claude" / "references" / "genre-profiles.md"
+        taxonomy_path = self.config.project_root / "references" / "reading-power-taxonomy.md"
+        if not taxonomy_path.exists():
+            taxonomy_path = self.config.project_root / ".claude" / "references" / "reading-power-taxonomy.md"
 
         profile_text = profile_path.read_text(encoding="utf-8") if profile_path.exists() else ""
         taxonomy_text = taxonomy_path.read_text(encoding="utf-8") if taxonomy_path.exists() else ""

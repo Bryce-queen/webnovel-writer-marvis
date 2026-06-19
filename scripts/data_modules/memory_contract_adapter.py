@@ -242,7 +242,10 @@ class MemoryContractAdapter:
                     or ""
                 ).strip()
             if genre:
-                profile_path = self.config.project_root / ".claude" / "references" / "genre-profiles.md"
+                # Marvis 优先：项目根 references/；Claude Code 兜底：.claude/references/
+                profile_path = self.config.project_root / "references" / "genre-profiles.md"
+                if not profile_path.exists():
+                    profile_path = self.config.project_root / ".claude" / "references" / "genre-profiles.md"
                 if profile_path.exists():
                     profile_text = profile_path.read_text(encoding="utf-8")
                     excerpt = extract_genre_section(profile_text, genre)
