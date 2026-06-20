@@ -3,8 +3,8 @@
 """
 Chapter commit CLI — 原子提交链。
 
-单次调用自动执行：预检 → 评分落库 → 提交 → 投影 → 后检 → 日志。
-外部无需再分别调用 write-gate / review-pipeline / run-log，物理杜绝漏跑。
+单次调用自动执行 7 步：预检 → 评分落库 → 提交 → 投影 → 后检 → 日志 → 备份 → 最终报告。
+外部无需再分别调用 write-gate / review-pipeline / run-log / backup / user-report，物理杜绝漏跑。
 """
 from __future__ import annotations
 
@@ -18,6 +18,9 @@ from runtime_compat import enable_windows_utf8_stdio
 from data_modules.chapter_commit_service import ChapterCommitService
 from data_modules.config import DataModulesConfig
 from data_modules.index_manager import IndexManager
+
+from backup_manager import GitBackupManager
+from data_modules.user_report import build_user_report, format_user_report
 
 
 def _read_json(path: str) -> dict:
@@ -39,6 +42,7 @@ def main() -> None:
     parser.add_argument("--fulfillment-result", required=True)
     parser.add_argument("--disambiguation-result", required=True)
     parser.add_argument("--extraction-result", required=True)
+    parser.add_argument("--chapter-title", default="")
     args = parser.parse_args()
 
     project_root = Path(args.project_root)
@@ -93,6 +97,25 @@ def main() -> None:
             "postcommit_status": post.get("status"),
         },
     )
+
+    # ── 6. 备份（backup_manager） ──
+    chapter_title = str(args.chapter_title or "").strip()
+    try:
+        backup_mgr = GitBackupManager(str(project_root))
+        backup_ok = backup_mgr.backup(chapter, chapter_title)
+        payload["_backup_ok"] = backup_ok
+    except Exception as exc:
+        print(f"⚠️  备份失败（非致命）: {exc}", file=sys.stderr)
+        payload["_backup_ok"] = False
+
+    # ── 7. 最终报告（user_report） ──
+    try:
+        report = build_user_report(project_root, stage="write", chapter=chapter)
+        report_text = format_user_report(report, "text")
+        payload["_user_report"] = report_text
+    except Exception as exc:
+        print(f"⚠️  最终报告生成失败（非致命）: {exc}", file=sys.stderr)
+        payload["_user_report"] = ""
 
     print(json.dumps(payload, ensure_ascii=False))
 
