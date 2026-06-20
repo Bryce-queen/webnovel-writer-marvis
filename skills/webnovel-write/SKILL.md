@@ -50,18 +50,16 @@ python -X utf8 "{SKILL_ROOT}/scripts/reference_search.py" --skill write --table 
 | 0 | 刷新合同 | `story-system ...` + `write-gate --stage prewrite` | [ ] |
 | 1 | 生成任务书 | Agent: `context-agent` | [ ] |
 | 2 | 起草正文 | 主流程直接写 | [ ] |
-| 3a | 审查（Agent） | Agent: `reviewer` → 返回 JSON | [ ] |
+| 3 | 审查（Agent） | Agent: `reviewer` → 返回 JSON | [ ] |
 | 4 | 润色 | 修复 issue + 排版 + Anti-AI 终检 | [ ] |
 | 5a | 提取事实 | Agent: `data-agent` → 三份 JSON | [ ] |
-| 5b | 提交前校验 | `write-gate --stage precommit` | [ ] |
-| 5c | Git diff | `git diff --name-status -- .` | [ ] |
-| 5d | 提交 ⭐ | `chapter-commit ...`（内置 review-pipeline，自动评分落库，不可漏跑） | [ ] |
-| 5e | 提交后校验 | `write-gate --stage postcommit` | [ ] |
-| 5f | 补投影 | `projections retry`（仅失败时） | [ ] |
+| 5b | Git diff | `git diff --name-status -- .` | [ ] |
+| 5c | 原子提交 ⭐ | `chapter-commit ...`（内置 预检→评分→提交→投影→后检→日志，6 步打包执行） | [ ] |
+| 5d | 补投影 | `projections retry`（仅失败时） | [ ] |
 | 6 | 备份 | `backup --chapter ...` | [ ] |
 | R | 最终报告 | `user-report --stage write` | [ ] |
 
-> ⚠️ **已修复**：review-pipeline 评分漏跑是历史最高频故障。v1.0.13 起已内置于 `chapter-commit`，调用即执行，物理层面杜绝跳过。
+> ⚠️ **已修复**：v1.0.13 起 `chapter-commit` 为原子操作，内部依次执行 write-gate precommit → review-pipeline 评分落库 → 提交 → 投影 → write-gate postcommit → run-log，调用即全量执行，物理杜绝漏跑。
 
 ## 执行流程
 
