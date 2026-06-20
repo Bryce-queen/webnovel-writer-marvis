@@ -26,7 +26,23 @@ def main() -> None:
     parser.add_argument("--extraction-result", required=True)
     args = parser.parse_args()
 
-    service = ChapterCommitService(Path(args.project_root))
+    project_root = Path(args.project_root)
+
+    # 内置审查 Pipeline：计算评分与指标并写入 index.db，确保不可能漏跑
+    from review_pipeline import _build_review_metrics_record, build_review_artifacts
+    artifacts = build_review_artifacts(
+        project_root=project_root,
+        chapter=args.chapter,
+        review_results_path=Path(args.review_result),
+        report_file="",
+    )
+    from data_modules.config import DataModulesConfig
+    from data_modules.index_manager import IndexManager
+    config = DataModulesConfig.from_project_root(project_root)
+    manager = IndexManager(config)
+    manager.save_review_metrics(_build_review_metrics_record(artifacts["metrics"]))
+
+    service = ChapterCommitService(project_root)
     payload = service.build_commit(
         chapter=args.chapter,
         review_result=_read_json(args.review_result),

@@ -51,18 +51,17 @@ python -X utf8 "{SKILL_ROOT}/scripts/reference_search.py" --skill write --table 
 | 1 | 生成任务书 | Agent: `context-agent` | [ ] |
 | 2 | 起草正文 | 主流程直接写 | [ ] |
 | 3a | 审查（Agent） | Agent: `reviewer` → 返回 JSON | [ ] |
-| 3b | 审查（落库）⭐ | `review-pipeline --save-metrics` | [ ] |
 | 4 | 润色 | 修复 issue + 排版 + Anti-AI 终检 | [ ] |
 | 5a | 提取事实 | Agent: `data-agent` → 三份 JSON | [ ] |
 | 5b | 提交前校验 | `write-gate --stage precommit` | [ ] |
 | 5c | Git diff | `git diff --name-status -- .` | [ ] |
-| 5d | 提交 | `chapter-commit ...` | [ ] |
+| 5d | 提交 ⭐ | `chapter-commit ...`（内置 review-pipeline，自动评分落库，不可漏跑） | [ ] |
 | 5e | 提交后校验 | `write-gate --stage postcommit` | [ ] |
 | 5f | 补投影 | `projections retry`（仅失败时） | [ ] |
 | 6 | 备份 | `backup --chapter ...` | [ ] |
 | R | 最终报告 | `user-report --stage write` | [ ] |
 
-> ⚠️ **3b review-pipeline** 是最高频漏调项。reviewer Agent 只输出 JSON，不写 index.db；必须由 review-pipeline 将 issue 清单转为 metrics 落库。
+> ⚠️ **已修复**：review-pipeline 评分漏跑是历史最高频故障。v1.0.13 起已内置于 `chapter-commit`，调用即执行，物理层面杜绝跳过。
 
 ## 执行流程
 
