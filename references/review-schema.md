@@ -17,7 +17,7 @@
 | 字段 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | severity | critical/high/medium/low | ✅ | 严重度 |
-| category | continuity/setting/character/timeline/ai_flavor/logic/pacing/other | ✅ | 问题分类 |
+| category | continuity/setting/character/timeline/ai_flavor/logic/coverage/pacing/other | ✅ | 问题分类 |
 | location | string | ✅ | 位置（如"第3段"） |
 | description | string | ✅ | 问题描述 |
 | evidence | string | ❌ | 原文引用或记忆对比 |
@@ -28,6 +28,7 @@
 
 - 存在任何 `blocking=true` 的 issue → Step 4 不得开始
 - `severity=critical` 自动 `blocking=true`
+- `coverage` 维度：正文全角字符数 < 2000 → 自动 `severity=critical`, `blocking=true`
 - 其余 severity 由审查 agent 根据上下文判断
 
 ## 指标沉淀
