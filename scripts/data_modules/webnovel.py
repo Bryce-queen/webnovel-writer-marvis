@@ -30,6 +30,11 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    load_dotenv = None  # type: ignore[assignment]
+
 from runtime_compat import enable_windows_utf8_stdio, normalize_windows_path
 from project_locator import resolve_project_root, write_current_project_pointer, update_global_registry_current_project
 
@@ -619,6 +624,11 @@ def main() -> None:
 
     # 其余工具：统一解析 project_root 后前置给下游
     project_root = _resolve_root(args.project_root)
+    try:
+        if load_dotenv is not None:
+            load_dotenv(project_root / '.env')
+    except Exception:
+        pass  # .env 缺失或格式异常不阻塞主流程
     forward_args = ["--project-root", str(project_root)]
 
     if tool == "index":
