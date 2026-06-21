@@ -20,7 +20,7 @@ from data_modules.index_manager import IndexManager
 from data_modules.user_report import build_user_report, format_user_report
 from data_modules.run_logger import write_run_log
 
-from review_pipeline import _build_review_metrics_record, build_review_artifacts, write_review_report
+from review_pipeline import _build_review_metrics_record, _validate_diagnostics, build_review_artifacts, write_review_report
 
 
 def _die(stage: str, errors: list[str]) -> None:
@@ -35,10 +35,15 @@ def main() -> None:
     parser.add_argument("--review-results", required=True, help="reviewer 原始结果 JSON")
     parser.add_argument("--metrics-out", default="", help="metrics 输出文件")
     parser.add_argument("--report-file", default="", help="审查报告路径")
+    parser.add_argument("--require-diagnostics", default="",
+                        help="前置诊断产物目录；传此参数则强制校验 prose-check + jwynia 产出已存在")
     args = parser.parse_args()
 
     project_root = Path(args.project_root)
     chapter = args.chapter
+
+    if args.require_diagnostics:
+        _validate_diagnostics(Path(args.require_diagnostics))
 
     # ── 1. 审查报告 + 指标落库（review-pipeline） ──
     try:

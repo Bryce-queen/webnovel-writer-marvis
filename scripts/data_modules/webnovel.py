@@ -575,6 +575,8 @@ def main() -> None:
     p_review_pipeline.add_argument("--metrics-out", default="", help="metrics 输出文件")
     p_review_pipeline.add_argument("--report-file", default="", help="审查报告路径")
     p_review_pipeline.add_argument("--save-metrics", action="store_true", help="直接写入 index.db")
+    p_review_pipeline.add_argument("--require-diagnostics", default="",
+                                   help="前置诊断产物目录；传此参数则强制校验 prose-check + jwynia 产出已存在")
 
     p_placeholder_scan = sub.add_parser("placeholder-scan", help="扫描大纲/设定集未补齐占位")
     p_placeholder_scan.add_argument("--format", choices=["json", "text"], default="json", help="输出格式")
@@ -695,6 +697,8 @@ def main() -> None:
             return_args.extend(["--report-file", str(args.report_file)])
         if args.save_metrics:
             return_args.append("--save-metrics")
+        if args.require_diagnostics:
+            return_args.extend(["--require-diagnostics", str(args.require_diagnostics)])
         raise SystemExit(_run_script("review_pipeline.py", return_args))
     if tool == "placeholder-scan":
         raise SystemExit(_run_data_module("placeholder_scanner", [*forward_args, "--format", str(args.format)]))

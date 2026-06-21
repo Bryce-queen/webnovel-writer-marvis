@@ -169,6 +169,54 @@ def build_review_artifacts(
     }
 
 
+REQUIRED_DIAGNOSTICS = [
+    ("prose_check.txt",     "prose-check 前置检测（Step 5）"),
+    ("prose_critique.txt",  "prose-critique 对抗性阅读（Step 5）"),
+    ("story_sense.txt",     "story-sense 叙事健康度诊断（Step 5）"),
+]
+
+OPTIONAL_DIAGNOSTICS = [
+    ("worldbuilding.txt",      "worldbuilding 设定兼容性校验（Step 5，条件触发）"),
+    ("revision.txt",           "revision 修改策略（Step 6，条件触发）"),
+    ("genre_conventions.txt",  "genre-conventions 类型合规（Step 7，条件触发）"),
+]
+
+
+def _validate_diagnostics(diag_dir: Path) -> None:
+    if not diag_dir.is_dir():
+        sys.exit(f"[pipeline 阻断] 诊断产物目录不存在：{diag_dir}\n"
+                 "请确保已按 SKILL.md 执行前置诊断步骤（prose-check + jwynia）。")
+
+    missing: list[str] = []
+    for filename, label in REQUIRED_DIAGNOSTICS:
+        fpath = diag_dir / filename
+        if not fpath.is_file():
+            missing.append(f"  - {filename} ({label})")
+        elif fpath.stat().st_size == 0:
+            missing.append(f"  - {filename} ({label}) — 文件为空")
+
+    if missing:
+        sys.exit(
+            f"\n[pipeline 阻断] 缺少以下必需诊断产物 ({len(missing)} 项)：\n"
+            + "\n".join(missing)
+            + f"\n\n请确保已完整执行 SKILL.md Step 5，将诊断输出写入 {diag_dir} 后再调用本 pipeline。\n"
+        )
+
+    for filename, label in OPTIONAL_DIAGNOSTICS:
+        fpath = diag_dir / filename
+        if fpath.is_file() and fpath.stat().st_size == 0:
+            fpath.unlink()
+
+
+def _load_diagnostics(diag_dir: Path) -> dict[str, str]:
+    result: dict[str, str] = {}
+    for filename, _label in [*REQUIRED_DIAGNOSTICS, *OPTIONAL_DIAGNOSTICS]:
+        fpath = diag_dir / filename
+        if fpath.is_file():
+            result[filename] = fpath.read_text(encoding="utf-8").strip()
+    return result
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Review pipeline v6")
     parser.add_argument("--project-root", required=True)
@@ -178,10 +226,18 @@ def main() -> None:
     parser.add_argument("--report-file", default="")
     parser.add_argument("--save-metrics", action="store_true",
                         help="直接写入 index.db，省去单独调用 save-review-metrics")
+    parser.add_argument("--require-diagnostics",
+                        help="前置诊断产物目录；传此参数则强制校验 prose-check + jwynia 产出已存在")
 
     args = parser.parse_args()
     project_root = Path(args.project_root)
     review_results_path = Path(args.review_results)
+
+    diagnostics: dict[str, str] = {}
+    if args.require_diagnostics:
+        diag_dir = Path(args.require_diagnostics)
+        _validate_diagnostics(diag_dir)
+        diagnostics = _load_diagnostics(diag_dir)
 
     payload = build_review_artifacts(
         project_root=project_root,
@@ -211,6 +267,9 @@ def main() -> None:
         config = DataModulesConfig.from_project_root(project_root)
         manager = IndexManager(config)
         manager.save_review_metrics(_build_review_metrics_record(payload["metrics"]))
+
+    if diagnostics:
+        payload["diagnostics_provided"] = sorted(diagnostics.keys())
 
     print(json.dumps(payload, ensure_ascii=False, indent=2))
 
