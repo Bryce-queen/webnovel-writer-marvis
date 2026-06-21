@@ -145,10 +145,9 @@ python -X utf8 "{SKILL_ROOT}/scripts/webnovel.py" --project-root "{PROJECT_ROOT}
   --review-results "{PROJECT_ROOT}/.webnovel/tmp/review_results.json" \
   --metrics-out "{PROJECT_ROOT}/.webnovel/tmp/review_metrics.json" \
   --report-file "审查报告/第{chapter_num}章审查报告.md" \
-  --require-diagnostics "{PROJECT_ROOT}/.webnovel/tmp/diagnostics/ch{chapter_num}"
 ```
 
-> ⚠️ **强制校验**：`--require-diagnostics` 会在落库前检查指定目录下是否存在 `prose_check.txt`、`prose_critique.txt`、`story_sense.txt` 三个必需产物。缺任一文件则 pipeline 直接阻断退出，拒绝落库。这确保在调用 `review-commit` 前必须已经完成 Step 5（prose-check + jwynia 诊断）。诊断产物目录结构参见 Step 5。
+> ⚠️ **默认强制校验**：`review-commit` 和 `review-pipeline` 会自动检查 `{PROJECT_ROOT}/.webnovel/tmp/diagnostics/ch{chapter_num}/` 下是否存在 `prose_check.txt`、`prose_critique.txt`、`story_sense.txt` 三个必需产物。缺任一文件直接阻断退出，拒绝落库。正常情况下无需任何额外参数即可生效。仅在批处理重算等非审查场景可传 `--skip-diagnostics-check` 豁免。这确保 Step 7 执行前 Step 5（prose-check + jwynia 诊断）一定已完成。诊断产物目录结构参见 Step 5。
 
 ### Step 8：处理阻断
 

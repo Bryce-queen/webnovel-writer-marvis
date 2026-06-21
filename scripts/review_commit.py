@@ -35,15 +35,16 @@ def main() -> None:
     parser.add_argument("--review-results", required=True, help="reviewer 原始结果 JSON")
     parser.add_argument("--metrics-out", default="", help="metrics 输出文件")
     parser.add_argument("--report-file", default="", help="审查报告路径")
-    parser.add_argument("--require-diagnostics", default="",
-                        help="前置诊断产物目录；传此参数则强制校验 prose-check + jwynia 产出已存在")
+    parser.add_argument("--skip-diagnostics-check", action="store_true",
+                        help="跳过前置诊断校验（仅限批处理重算等非审查场景，正常审查禁止使用）")
     args = parser.parse_args()
 
     project_root = Path(args.project_root)
     chapter = args.chapter
 
-    if args.require_diagnostics:
-        _validate_diagnostics(Path(args.require_diagnostics))
+    if not args.skip_diagnostics_check:
+        diag_dir = project_root / ".webnovel" / "tmp" / "diagnostics" / f"ch{chapter}"
+        _validate_diagnostics(diag_dir)
 
     # ── 1. 审查报告 + 指标落库（review-pipeline） ──
     try:

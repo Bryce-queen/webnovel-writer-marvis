@@ -226,16 +226,16 @@ def main() -> None:
     parser.add_argument("--report-file", default="")
     parser.add_argument("--save-metrics", action="store_true",
                         help="直接写入 index.db，省去单独调用 save-review-metrics")
-    parser.add_argument("--require-diagnostics",
-                        help="前置诊断产物目录；传此参数则强制校验 prose-check + jwynia 产出已存在")
+    parser.add_argument("--skip-diagnostics-check", action="store_true",
+                        help="跳过前置诊断校验（仅限批处理重算等非审查场景，正常审查禁止使用）")
 
     args = parser.parse_args()
     project_root = Path(args.project_root)
     review_results_path = Path(args.review_results)
 
     diagnostics: dict[str, str] = {}
-    if args.require_diagnostics:
-        diag_dir = Path(args.require_diagnostics)
+    diag_dir = project_root / ".webnovel" / "tmp" / "diagnostics" / f"ch{args.chapter}"
+    if not args.skip_diagnostics_check:
         _validate_diagnostics(diag_dir)
         diagnostics = _load_diagnostics(diag_dir)
 
