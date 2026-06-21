@@ -128,7 +128,11 @@ class ReviewResult:
 
     def _calculate_overall_score(self) -> float:
         dims = self._build_dimension_scores()
-        return _clamp_score(sum(dims.values()) / len(dims))
+        values = list(dims.values())
+        mean_score = sum(values) / len(values)
+        min_score = min(values)
+        # 均值与最弱维度取中点：防止单维度崩塌被整体均值掩盖
+        return _clamp_score((mean_score + min_score) / 2.0)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
