@@ -33,3 +33,10 @@ Thumbs.db
 scripts/.tmp_pytest/
 scripts/.tmp_pytest_manual/
 scripts/zzz_test.db*
+
+# Dev/test distribution exclusion
+scripts/.coveragerc
+pytest.ini
+sitecustomize.py
+evals/
+skills/*/evals/
