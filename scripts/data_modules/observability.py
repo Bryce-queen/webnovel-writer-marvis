@@ -55,7 +55,7 @@ def safe_append_perf_timing(
     meta: Optional[Dict[str, Any]] = None,
 ) -> None:
     """
-    Append timing trace for profiling long-running data-agent pipeline steps.
+    Append timing trace for profiling long-running fact-extraction pipeline steps.
 
     Output path:
     - {project_root}/.webnovel/observability/data_agent_timing.jsonl

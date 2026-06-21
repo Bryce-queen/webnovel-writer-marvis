@@ -356,7 +356,7 @@ def build_chapter_context_payload(project_root: Path, chapter_num: int) -> Dict[
 
 
 def _render_text(payload: Dict[str, Any]) -> str:
-    """JSON 序列化输出，text 渲染由 context-agent 负责。"""
+    """JSON 序列化输出，text 渲染由事实提取 Agent 负责。"""
     return json.dumps(payload, ensure_ascii=False, indent=2)
 
 
@@ -365,7 +365,7 @@ def main():
     parser.add_argument("--chapter", type=int, required=True, help="目标章节号")
     parser.add_argument("--project-root", type=str, help="项目根目录")
     parser.add_argument("--format", choices=["json"], default="json",
-                        help="输出格式（始终 JSON，text 渲染由 context-agent 负责）")
+                        help="输出格式（始终 JSON，text 渲染由事实提取 Agent 负责）")
 
     args = parser.parse_args()
 

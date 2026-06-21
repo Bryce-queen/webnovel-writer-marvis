@@ -1471,7 +1471,7 @@ def main():
                 "code": "SCHEMA_VALIDATION_FAILED",
                 "message": "数据结构校验失败",
                 "details": {"errors": []},
-                "suggestion": "请检查 data-agent 输出字段是否完整且类型正确",
+                "suggestion": "请检查事实提取输出字段是否完整且类型正确",
             }
             emit_error(err["code"], err["message"], suggestion=err.get("suggestion"))
             return

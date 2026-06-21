@@ -3,7 +3,7 @@
 """
 记忆契约类型与 Protocol 定义。
 
-上层消费者（context-agent、data-agent、reviewer）只依赖本模块的类型和协议，
+上层消费者（事实提取、审查流程、file-agent）只依赖本模块的类型和协议，
 不直接依赖 StateManager / IndexManager / ScratchpadManager 等具体实现。
 
 具体实现见 memory_contract_adapter.py。

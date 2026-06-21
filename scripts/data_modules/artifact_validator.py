@@ -78,7 +78,7 @@ def _read_json_artifact(path: str | Path) -> tuple[Any, dict[str, Any] | None]:
             message=f"artifact missing: {artifact_path}",
             path=str(artifact_path),
             impact="提交前 artifact 不完整，无法可靠生成 chapter commit。",
-            repair="重新运行 reviewer/data-agent，或按 schema 补齐该 JSON 文件。",
+            repair="重新运行审查/事实提取流程，或按 schema 补齐该 JSON 文件。",
         )
     try:
         return json.loads(artifact_path.read_text(encoding="utf-8")), None

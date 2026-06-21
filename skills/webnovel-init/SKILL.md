@@ -1,7 +1,7 @@
 ---
 name: webnovel-init
 description: 深度初始化网文项目。通过分阶段交互收集完整创作信息，生成可直接进入规划与写作的项目骨架与约束文件。
-allowed-tools: read_text write_file edit shell_executor Agent AskUserQuestion web_search web_fetch
+allowed-tools: read_text write_file edit shell_executor dispatch_task AskUserQuestion web_search web_fetch
 argument-hint: "[书名或灵感（可选）]"
 ---
 
@@ -34,13 +34,13 @@ argument-hint: "[书名或灵感（可选）]"
 
 按需读取上述长细则（创意约束、反套路库、世界观设计指南、卖点模板），不内联其条目。
 
-## > **Marvis 说明**：本 skill 中提到的工具名对应 Marvis 运行时：`read_text`（读文件）、`write_file`（写文件）、`shell_executor`（执行命令，替代 Bash/Grep）、Agent（子代理）、`web_search`/`web_fetch`（搜索/抓取）。
+## > **Marvis 说明**：本 skill 中提到的工具名对应 Marvis 运行时：`read_text`（读文件）、`write_file`（写文件）、`shell_executor`（执行命令，替代 Bash/Grep）、`dispatch_task`（子 Agent 派发）、`web_search`/`web_fetch`（搜索/抓取）。
 
 工具策略
 
 - `read_text`/`shell_executor`：读项目上下文与参考文件。
 - `shell_executor`：执行 `webnovel.py init`、文件存在性检查、最小验证。
-- `Agent`：拆分并行子任务；Step 1.5 用户选择参考书拆解作灵感来源时调用 `webnovel-writer:deconstruction-agent`。
+- `dispatch_task`：拆分并行子任务；Step 1.5 用户选择参考书拆解作灵感来源时调用 `dispatch_task("file-agent")`。
 - `AskUserQuestion`：关键分歧裁决、候选选择、最终确认。
 - `web_search`/`web_fetch`：仅在用户要求市场趋势/平台风向、创意约束需时间敏感依据、或题材信息明显不确定时使用，先 search 后 fetch 核验。
 
@@ -79,19 +79,20 @@ export SCRIPTS_DIR="{SKILL_ROOT}/scripts"
 
 可接受来源：原创想法、参考作品拆书（书名/平台/章节摘录/文本路径）、市场趋势、题材模板/反套路库/已有脑洞片段。
 
-当用户选择参考作品拆书且提供文本路径或章节摘录时，必须使用 `Agent` 工具调用 `webnovel-writer:deconstruction-agent`，不得由 init 主流程口头替代拆解结果。
+当用户选择参考作品拆书且提供文本路径或章节摘录时，必须使用 `dispatch_task` 派发给 `file-agent` 执行拆解，不得由 init 主流程口头替代拆解结果。
 
 ```text
-Use the Agent tool to run `webnovel-writer:deconstruction-agent`.
-
-Prompt: reference_title={reference_title}; reference_source={reference_source}; reference_text_path={reference_text_path}; reference_text_excerpt={reference_text_excerpt}; analysis_mode={quick|deep|auto}; init_goal={当前初始化故事方向或空}; target_genre={题材或空}。只返回 init_reference_research JSON 对象，不写任何文件，不创建目录，不写 .story-system、.webnovel、设定集、大纲、正文、idea_bank.json、state.json 或任何 canon/read model 文件。
+dispatch_task(
+  agent_name="file-agent",
+  task="<overall_goal>对参考作品进行拆书分析，提炼可迁移的写作要素</overall_goal><current_task>对以下参考作品进行拆解分析：reference_title={reference_title}; reference_source={reference_source}; reference_text_path={reference_text_path}; reference_text_excerpt={reference_text_excerpt}; analysis_mode={quick|deep|auto}; init_goal={当前初始化故事方向或空}; target_genre={题材或空}。只返回 init_reference_research JSON 对象，不写任何文件，不创建目录，不写 .story-system、.webnovel、设定集、大纲、正文、idea_bank.json、state.json 或任何 canon/read model 文件。</current_task>"
+)
 ```
 
 调用后主流程必须记录一份 `SubagentRun` 汇总（仅供最终报告使用，不写入 canon）：
 
 ```json
 {
-  "name": "deconstruction-agent",
+  "name": "file-agent",
   "user_label": "参考作品拆解",
   "status": "completed | partial | failed | skipped",
   "problems": [],

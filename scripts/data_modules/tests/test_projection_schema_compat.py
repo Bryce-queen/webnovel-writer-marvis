@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """Schema 兼容性测试：保护投影器在 LLM (DeepSeek v4pro) 实际输出 schema 下的行为。
 
-背景：data-agent.md 提示词写的是 `{"field": "realm", "new": "..."}`，
+背景：事实提取提示词写的是 `{"field": "realm", "new": "..."}`，
 但 LLM 实际输出 `{"field_path": "physical.condition", "new_value": "..."}`，
 entity_deltas 用 `entity_type` 而非 `type`，open_loop_created 事件 payload 没有 `content`
 但有 `description/loop_type/unanswered_question`。

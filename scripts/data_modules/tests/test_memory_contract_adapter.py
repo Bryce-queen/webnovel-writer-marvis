@@ -172,7 +172,7 @@ class TestGetOpenLoops:
         assert loops[0].urgency == 0.9
 
     def test_get_open_loops_with_string_urgency_does_not_crash(self, tmp_path):
-        """回归测试：data-agent 输出字符串 urgency 时，整批伏笔不应被吞掉。
+        """回归测试：事实提取输出字符串 urgency 时，整批伏笔不应被吞掉。
 
         Issue 根因：``get_open_loops`` 内部用 ``float("high")`` 抛
         ``ValueError``，外层 ``except`` 兜底返回 ``[]``，所有伏笔同时丢失。

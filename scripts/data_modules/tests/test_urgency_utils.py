@@ -107,7 +107,7 @@ class TestCoerceUrgencyOther:
 
 
 class TestRegressionOriginalBug:
-    """复现 Issue：data-agent 输出字符串 urgency 导致下游 ValueError。"""
+    """复现 Issue：事实提取输出字符串 urgency 导致下游 ValueError。"""
 
     def test_high_no_longer_raises(self):
         """旧代码 float("high") 抛 ValueError，新代码必须正常返回。"""
