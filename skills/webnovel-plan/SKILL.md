@@ -1,7 +1,7 @@
 ---
 name: webnovel-plan
 description: 基于总纲生成卷纲、时间线和章纲，并把新增设定增量写回现有设定集。
-allowed-tools: read_text write_file edit shell_executor AskUserQuestion
+allowed-tools: read_text write_file edit shell_executor AskUserQuestion use_skill
 argument-hint: "[卷号，如 1]"
 ---
 
@@ -29,11 +29,11 @@ argument-hint: "[卷号，如 1]"
 
 ```bash
 export WORKSPACE_ROOT="{PROJECT_ROOT}"
-export SKILL_ROOT="{SKILL_ROOT}"
-export SCRIPTS_DIR="{SKILL_ROOT}/scripts"
-export PROJECT_ROOT="$(python "{SKILL_ROOT}/scripts/webnovel.py" --project-root "${WORKSPACE_ROOT}" where)"
+export SKILL_ROOT="/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer"
+export SCRIPTS_DIR="/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/scripts"
+export PROJECT_ROOT="$(python "/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/scripts/webnovel.py" --project-root "${WORKSPACE_ROOT}" where)"
 
-python -X utf8 "{SKILL_ROOT}/scripts/webnovel.py" --project-root "{PROJECT_ROOT}" placeholder-scan --format text
+python -X utf8 "/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/scripts/webnovel.py" --project-root "{PROJECT_ROOT}" placeholder-scan --format text
 ```
 
 规划开始 / 结束都运行 `placeholder-scan`；plan 阶段发现占位先警告并补齐相关文件，进入写章前不得保留当前章相关实体的 `[待...]` / `暂名` / `{占位}`。
@@ -44,24 +44,38 @@ python -X utf8 "{SKILL_ROOT}/scripts/webnovel.py" --project-root "{PROJECT_ROOT}
 
 | 触发 | 读取方式 | 文件 |
 |------|---------|------|
-| Step 4 | 全文 | `${SKILL_ROOT}/../../templates/output/大纲-卷节拍表.md` |
-| Step 5 | 全文 | `${SKILL_ROOT}/../../templates/output/大纲-卷时间线.md` |
-| Step 6 always | 区段 | `${SKILL_ROOT}/../../references/genre-profiles.md`（仅当前 genre 的 `### 2.x` 段） |
-| Step 6 always | 全文 | `${SKILL_ROOT}/../../references/shared/strand-weave-pattern.md` |
-| 章纲拆分 always | 区段 | `${SKILL_ROOT}/../../references/outlining/plot-signal-vs-spoiler.md` |
-| Step 6 需要爽点 | 区段 | `${SKILL_ROOT}/../../references/shared/cool-points-guide.md` |
-| Step 6/7 需要冲突 | 区段 | `${SKILL_ROOT}/references/outlining/conflict-design.md` |
-| Step 6/7 特定节奏 | 区段 | `${SKILL_ROOT}/references/outlining/genre-volume-pacing.md` |
-| Step 7 追读力分析 | 区段 | `${SKILL_ROOT}/../../references/reading-power-taxonomy.md` |
-| Step 7 章纲细化 + 节点规范 | 区段 | `${SKILL_ROOT}/references/outlining/chapter-planning.md` |
+| Step 4 | 全文 | `$/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/../../templates/output/大纲-卷节拍表.md` |
+| Step 5 | 全文 | `$/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/../../templates/output/大纲-卷时间线.md` |
+| Step 6 always | 区段 | `$/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/../../references/genre-profiles.md`（仅当前 genre 的 `### 2.x` 段） |
+| Step 6 always | 全文 | `$/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/../../references/shared/strand-weave-pattern.md` |
+| 章纲拆分 always | 区段 | `$/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/../../references/outlining/plot-signal-vs-spoiler.md` |
+| Step 6 需要爽点 | 区段 | `$/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/../../references/shared/cool-points-guide.md` |
+| Step 6/7 需要冲突 | 区段 | `$/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/references/outlining/conflict-design.md` |
+| Step 6/7 特定节奏 | 区段 | `$/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/references/outlining/genre-volume-pacing.md` |
+| Step 7 追读力分析 | 区段 | `$/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/../../references/reading-power-taxonomy.md` |
+| Step 7 章纲细化 + 节点规范 | 区段 | `$/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/references/outlining/chapter-planning.md` |
 
 CSV 创作参考用检索读，不 `cat` 整表：
 
 ```bash
-python -X utf8 "{SKILL_ROOT}/scripts/reference_search.py" --skill plan --table 爽点与节奏 --query "{卷级核心冲突}" --genre "${GENRE}"
-python -X utf8 "{SKILL_ROOT}/scripts/reference_search.py" --skill plan --table 桥段套路 --query "{卷级核心冲突}" --genre "${GENRE}"
-python -X utf8 "{SKILL_ROOT}/scripts/reference_search.py" --skill plan --table 命名规则 --query "角色命名" --genre "${GENRE}"
+python -X utf8 "/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/scripts/reference_search.py" --skill plan --table 爽点与节奏 --query "{卷级核心冲突}" --genre "${GENRE}"
+python -X utf8 "/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/scripts/reference_search.py" --skill plan --table 桥段套路 --query "{卷级核心冲突}" --genre "${GENRE}"
+python -X utf8 "/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/scripts/reference_search.py" --skill plan --table 命名规则 --query "角色命名" --genre "${GENRE}"
 ```
+
+## Jwynia 创作技法融合（规划阶段）
+
+> 以下 jwynia 技能由 plan 主流程在对应步骤按需 `use_skill` 调用。每次调用产出诊断/指导文本，不落盘。
+
+| Step | 触发条件 | 调用 | 产出 |
+|------|---------|------|------|
+| Step 2 设定基线补齐 | always | `use_skill("worldbuilding", task="诊断当前设定集（世界观+力量体系）的厚度与一致性")` | 设定诊断（缺漏清单、自然/设计感评估） |
+| Step 4 卷节拍表 | 生成节拍表后 | `use_skill("scene-sequencing", task="对第{volume}卷节拍表做场景-续篇节奏分析")` | 节奏诊断（哪些节拍需要补 Sequel、哪些过于密集） |
+| Step 6 卷纲骨架 | 卷纲骨架初稿后 | `use_skill("plot-structure", task="对第{volume}卷的剧情骨架进行结构诊断：卷级起承转合是否完整、Strand 交错是否清晰")` | 结构弱点清单与修复建议 |
+| Step 7 章纲拆分 | 整卷章纲完成后 | `use_skill("story-sense", task="诊断第{volume}卷第{start}-{end}章的叙事健康度")` | 叙事问题汇总（节奏/逻辑/情感） |
+| 卷末收尾 | 卷末钩子设计时 | `use_skill("genre-conventions", task="核定第{volume}卷末钩子是否满足题材={genre}的惯例")` | 类型合规性校验 |
+
+> 调用规则：Step 触发时主流程必须先 `use_skill` 获取诊断，再将结果纳入后续生成；绝不可跳过诊断直接产出。
 
 ## 执行流程
 
@@ -89,9 +103,9 @@ for ch in $(seq $((START_CH - 5)) $((START_CH - 1))); do
 done
 
 # 核心角色当前状态 / 核心关系当前状态 / 活跃伏笔（跨卷未回收）
-python -X utf8 "{SKILL_ROOT}/scripts/webnovel.py" --project-root "{PROJECT_ROOT}" knowledge query-entity-state --entity "{protagonist_id}" --at-chapter {上一卷最后章}
-python -X utf8 "{SKILL_ROOT}/scripts/webnovel.py" --project-root "{PROJECT_ROOT}" knowledge query-relationships --entity "{protagonist_id}" --at-chapter {上一卷最后章}
-python -X utf8 "{SKILL_ROOT}/scripts/webnovel.py" --project-root "{PROJECT_ROOT}" memory-contract get-open-loops
+python -X utf8 "/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/scripts/webnovel.py" --project-root "{PROJECT_ROOT}" knowledge query-entity-state --entity "{protagonist_id}" --at-chapter {上一卷最后章}
+python -X utf8 "/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/scripts/webnovel.py" --project-root "{PROJECT_ROOT}" knowledge query-relationships --entity "{protagonist_id}" --at-chapter {上一卷最后章}
+python -X utf8 "/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/scripts/webnovel.py" --project-root "{PROJECT_ROOT}" memory-contract get-open-loops
 ```
 
 ### Step 2：补齐设定基线
@@ -109,7 +123,7 @@ python -X utf8 "{SKILL_ROOT}/scripts/webnovel.py" --project-root "{PROJECT_ROOT}
 
 ### Step 4：生成卷节拍表
 
-加载模板 `${SKILL_ROOT}/../../templates/output/大纲-卷节拍表.md`。
+加载模板 `$/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/../../templates/output/大纲-卷节拍表.md`。
 
 硬要求：必须填写中段反转，确无则写"无（理由：...）"；危机链至少 3 次递增；卷末新钩子必须能落到最后一章的章末未闭合问题。
 
@@ -117,7 +131,7 @@ python -X utf8 "{SKILL_ROOT}/scripts/webnovel.py" --project-root "{PROJECT_ROOT}
 
 ### Step 5：生成卷时间线表
 
-加载模板 `${SKILL_ROOT}/../../templates/output/大纲-卷时间线.md`。
+加载模板 `$/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/../../templates/output/大纲-卷时间线.md`。
 
 硬要求：必须明确时间体系与本卷时间跨度；有倒计时事件时列出并标记 D-N。
 
@@ -125,7 +139,7 @@ python -X utf8 "{SKILL_ROOT}/scripts/webnovel.py" --project-root "{PROJECT_ROOT}
 
 ### Step 6：生成卷纲骨架
 
-必读 `${SKILL_ROOT}/../../references/genre-profiles.md` 与 `${SKILL_ROOT}/../../references/shared/strand-weave-pattern.md`；按需读取爽点 / 冲突 / 节奏 reference（见读取策略表）。
+必读 `$/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/../../references/genre-profiles.md` 与 `$/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/../../references/shared/strand-weave-pattern.md`；按需读取爽点 / 冲突 / 节奏 reference（见读取策略表）。
 
 卷纲必须明确：卷摘要、关键人物与反派层级、Strand 分布、爽点密度规划、伏笔规划、约束触发规划。
 
@@ -139,13 +153,13 @@ python -X utf8 "{SKILL_ROOT}/scripts/webnovel.py" --project-root "{PROJECT_ROOT}
 
 批次规则：默认 `10章/批`；复杂题材或多线并进降到 `8章/批`；简单升级流放宽到 `12章/批`；不建议单批超过 `12章`。
 
-按需读取 `${SKILL_ROOT}/../../references/reading-power-taxonomy.md` 与 `${SKILL_ROOT}/references/outlining/chapter-planning.md`。
+按需读取 `$/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/../../references/reading-power-taxonomy.md` 与 `$/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/references/outlining/chapter-planning.md`。
 
 每章必须包含：目标、阻力、代价、时间锚点、章内时间跨度、与上章时间差、倒计时状态、爽点、Strand、反派层级、视角/主角、关键实体、本章变化、章末未闭合问题、钩子，以及结构化节点 `CBN`、`CPNs`、`CEN`、`必须覆盖节点`、`本章禁区`。
 
 #### 结构化节点
 
-节点格式统一为 `主体 | 动作/变化 | 对象/结果`（写作执行骨架，不追求严格语法 SVO）。完整格式说明、字段细则与示例见 `${SKILL_ROOT}/references/outlining/chapter-planning.md` 的「结构化节点规范」，按需区段读，不在本文件内联。
+节点格式统一为 `主体 | 动作/变化 | 对象/结果`（写作执行骨架，不追求严格语法 SVO）。完整格式说明、字段细则与示例见 `$/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/references/outlining/chapter-planning.md` 的「结构化节点规范」，按需区段读，不在本文件内联。
 
 核心约束：
 
@@ -172,7 +186,7 @@ python -X utf8 "{SKILL_ROOT}/scripts/webnovel.py" --project-root "{PROJECT_ROOT}
 ```bash
 GENRE="$(python -X utf8 -c "import json; s=json.load(open('{PROJECT_ROOT}/.webnovel/state.json',encoding='utf-8')); pi=s.get('project_info',{}); print(pi.get('genre') or s.get('project',{}).get('genre',''))")"
 
-python -X utf8 "{SKILL_ROOT}/scripts/webnovel.py" --project-root "{PROJECT_ROOT}" plan-commit \
+python -X utf8 "/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/scripts/webnovel.py" --project-root "{PROJECT_ROOT}" plan-commit \
   --volume {volume_id} \
   --chapters-range "{start}-{end}" \
   --writeback-file "大纲/第{volume_id}卷-总纲写回.json" \

@@ -1,7 +1,7 @@
 ---
 name: webnovel-write
 description: 产出可发布章节，完整执行上下文→起草→审查→润色→提交→备份。
-allowed-tools: read_text write_file edit shell_executor Agent AskUserQuestion
+allowed-tools: read_text write_file edit shell_executor Agent AskUserQuestion use_skill
 argument-hint: "[章号] [--fast|--minimal]"
 ---
 
@@ -60,6 +60,19 @@ python -X utf8 "{SKILL_ROOT}/scripts/reference_search.py" --skill write --table 
 | R | 最终报告 | ✅ 已由 chapter-commit 覆盖 | [ ] |
 
 > ⚠️ **已修复**：v1.0.15 起 `chapter-commit` 为原子操作，内部依次执行 write-gate precommit → review-pipeline 评分落库 → 提交 → 投影 → write-gate postcommit → run-log → backup → user-report，调用即全量执行，物理杜绝漏跑。Step 6 和 R 由 atomic chain 自动覆盖，无需单独调用。
+
+## Jwynia 创作技法融合（写章阶段）
+
+> 以下 jwynia 技能由 write 主流程在对应步骤按需 `use_skill` 调用。每次调用产出诊断/指导文本，不落盘。
+
+| # | 步骤 | 触发条件 | 调用 | 产出 |
+|---|------|---------|------|------|
+| 2a | 起草前诊断 | always | `use_skill("story-sense", task="诊断本章（第{chapter_num}章）写作任务书中的叙事健康度：检查 CBN→CPNs→CEN 链条是否完整、章末钩子是否自然")` | 叙事弱点清单，起草时规避 |
+| 4a | 润色-对话 | 正文含对话场景 | `use_skill("dialogue", task="诊断本章对话：是否所有角色声音一致、是否有潜台词层、是否有功能性对话")` | 对话修复清单 |
+| 4b | 润色-文笔 | always（`--minimal` 跳过） | `use_skill("prose-style", task="诊断本章文笔：句子节奏单调点、用词重复、语态问题")` | 文笔修复清单 |
+| 4c | 场景节奏 | 章内场景数≥3 | `use_skill("scene-sequencing", task="诊断本章场景节奏：是否有缺 Sequel 的场景、场景转换是否机械")` | 节奏调整建议 |
+
+> 调用规则：每个 jwynia 调用必须先于相应润色子步骤执行；诊断结果作为润色的输入清单；`--minimal` 模式下跳过所有 jwynia 诊断。
 
 ## 执行流程
 

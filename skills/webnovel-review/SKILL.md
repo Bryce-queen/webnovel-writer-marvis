@@ -1,7 +1,7 @@
 ---
 name: webnovel-review
 description: 使用审查 Agent 评估章节质量，生成报告并写回审查指标。
-allowed-tools: read_text shell_executor write_file edit Agent AskUserQuestion
+allowed-tools: read_text shell_executor write_file edit Agent AskUserQuestion use_skill
 argument-hint: "[章号或范围，如 5 或 1-5]"
 ---
 
@@ -19,6 +19,20 @@ argument-hint: "[章号或范围，如 5 或 1-5]"
 - file-agent 只返回严格 JSON；主流程负责用 `shell_executor` + `python -c` 直接覆写到 `{PROJECT_ROOT}/.webnovel/tmp/review_results.json`，随后由 `review-commit` 原子完成报告/指标/投影/日志。
 - 报告与 metrics 只由 `review-commit` 产出；主流程不伪造 `overall_score`。
 - 项目根不合法 / 缺 `.webnovel/state.json` / 缺待审正文 → 阻断。
+
+## Jwynia 创作技法融合（审查阶段）
+
+> 以下 jwynia 技能由 review 主流程在对应步骤按需 `use_skill` 调用。每次调用产出诊断/指导文本，不落盘。结果作为 file-agent 审查的补充输入。
+
+| Step | 触发条件 | 调用 | 产出 |
+|------|---------|------|------|
+| Step 5 审查前 | always | `use_skill("prose-critique", task="对本章正文进行对抗性阅读：寻找不奏效的地方，而非确认有效之处")` | 对抗性阅读笔记（薄弱点清单） |
+| Step 5 审查前 | always | `use_skill("story-sense", task="诊断本章叙事健康度：节奏/逻辑/情感三个维度")` | 叙事诊断报告 |
+| Step 5 审查前 | 章内新增设定或势力 | `use_skill("worldbuilding", task="诊断本章新增设定的合理性：与已有世界观是否兼容")` | 设定兼容性校验 |
+| Step 6 review-commit 后 | 审查报告有中高 severity 问题 | `use_skill("revision", task="基于本章审查报告给出结构化修改策略：优先级排序、连锁影响分析")` | 修改策略建议 |
+| Step 7 阻断裁决 | 存在 blocking issue | `use_skill("genre-conventions", task="校验本章是否违反题材={genre}的类型红线")` | 类型合规报告 |
+
+> 调用规则：Step 5 的三个 jwynia 诊断必须在 `dispatch_task("file-agent")` 之前完成；file-agent 的审查 prompt 中需包含 jwynia 诊断摘要。
 
 ## 执行流程
 

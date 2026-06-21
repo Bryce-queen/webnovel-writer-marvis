@@ -1,7 +1,7 @@
 ---
 name: webnovel-learn
 description: 从当前会话提取成功写作模式并写入 project_memory.json
-allowed-tools: read_text shell_executor
+allowed-tools: read_text shell_executor use_skill
 argument-hint: "[要记住的写作经验]"
 ---
 
@@ -13,7 +13,7 @@ argument-hint: "[要记住的写作经验]"
 - 用统一入口解析项目根，避免写错目录：
 
 ```bash
-export PROJECT_ROOT="$(python -X utf8 "{SKILL_ROOT}/scripts/webnovel.py" --project-root "{PROJECT_ROOT}" where)"
+export PROJECT_ROOT="$(python -X utf8 "/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/scripts/webnovel.py" --project-root "{PROJECT_ROOT}" where)"
 ```
 
 ## 目标
@@ -27,12 +27,29 @@ export PROJECT_ROOT="$(python -X utf8 "{SKILL_ROOT}/scripts/webnovel.py" --proje
 3. 调用 `project-memory add-pattern` 写入，不得手写或拼接 JSON：
 
 ```bash
-python -X utf8 "{SKILL_ROOT}/scripts/webnovel.py" --project-root "{PROJECT_ROOT}" project-memory add-pattern \
+python -X utf8 "/Users/aloha/Library/Application Support/com.tencent.mac.marvis/MarvisData/User/671DE13D0D82CB9B9E912E7E3C023532/skills/custom/webnovel-writer/scripts/webnovel.py" --project-root "{PROJECT_ROOT}" project-memory add-pattern \
   --pattern-type "{pattern_type}" \
   --description "{用户输入或提炼后的完整描述}" \
   --category "{分类，可空}" \
   --importance "{high|medium|low}"
 ```
+
+## Jwynia 模式分析与提炼
+
+> 每次 `add-pattern` 写入后，根据 pattern_type 调用对应 jwynia 技能反向分析「为什么这个模式奏效」，将分析结果追加为 pattern 的 `analysis` 字段，把经验归档升级为结构化创作知识。
+
+| pattern_type | 分析技能 | 调用 |
+|-------------|---------|------|
+| hook | story-sense | `use_skill("story-sense", task="分析这个钩子模式为何奏效：{pattern_description}")` |
+| pacing | scene-sequencing | `use_skill("scene-sequencing", task="分析这个节奏模式为何奏效：{pattern_description}")` |
+| dialogue | dialogue | `use_skill("dialogue", task="分析这段对话模式的技法：{pattern_description}")` |
+| prose / payoff | prose-style | `use_skill("prose-style", task="分析这个写法模式的文笔特点：{pattern_description}")` |
+| worldbuilding / setting | worldbuilding | `use_skill("worldbuilding", task="分析这个世界观设定手法的有效性：{pattern_description}")` |
+| emotion | story-sense | `use_skill("story-sense", task="分析这个情感处理模式的叙事效果：{pattern_description}")` |
+| format / structure | plot-structure | `use_skill("plot-structure", task="分析这个结构模式的效力：{pattern_description}")` |
+| other / 无法归类 | story-sense | `use_skill("story-sense", task="从叙事角度分析这个写作模式为何有效：{pattern_description}")` |
+
+> 调用规则：`add-pattern` 写入成功后立即触发对应 jwynia 分析；分析结果以 `## 技法解析` 追加到 pattern 的 `description` 字段末尾；两次调用（add-pattern → jwynia 分析 → 再次 add-pattern 更新）完成一条知识的完整归档。
 
 ## 约束
 

@@ -1,7 +1,7 @@
 ---
 name: webnovel-init
 description: 深度初始化网文项目。通过分阶段交互收集完整创作信息，生成可直接进入规划与写作的项目骨架与约束文件。
-allowed-tools: read_text write_file edit shell_executor dispatch_task AskUserQuestion web_search web_fetch
+allowed-tools: read_text write_file edit shell_executor dispatch_task AskUserQuestion web_search web_fetch use_skill
 argument-hint: "[书名或灵感（可选）]"
 ---
 
@@ -43,6 +43,21 @@ argument-hint: "[书名或灵感（可选）]"
 - `dispatch_task`：拆分并行子任务；Step 1.5 用户选择参考书拆解作灵感来源时调用 `dispatch_task("file-agent")`。
 - `AskUserQuestion`：关键分歧裁决、候选选择、最终确认。
 - `web_search`/`web_fetch`：仅在用户要求市场趋势/平台风向、创意约束需时间敏感依据、或题材信息明显不确定时使用，先 search 后 fetch 核验。
+
+## Jwynia 创作技法融合（初始化阶段）
+
+> 以下 jwynia 技能为创作技法层，由 init 主流程在对应步骤按需 `use_skill` 调用。每次调用产出诊断/指导文本，不落盘。
+
+| Step | 触发条件 | 调用 | 产出 |
+|------|---------|------|------|
+| Step 2 故事核采集 | always | `use_skill("story-idea-generator", task="基于当前故事核生成 3 个创意方向")` | 创意变体，用户选择或合并 |
+| Step 4 金手指 | 金手指类型未定型 | `use_skill("story-idea-generator", task="围绕金手指类型 {type} 生成可落地的创新用法")` | 金手指差异化方案 |
+| Step 5 世界观收集后 | always | `use_skill("worldbuilding", task="诊断当前世界观设定：世界规模={scale} 力量={power} 势力格局描述={factions}")` | 世界观诊断报告（薄/厚、自然/设计感） |
+| Step 5 收尾 | 世界观诊断有漏洞 | `use_skill("genre-conventions", task="校验题材={genre} 的类型约定是否被当前世界观满足")` | 类型差距清单 |
+| Step 6 创意约束 | 已有 2-3 套候选创意包 | `use_skill("genre-conventions", task="从类型惯例角度评估三套创意包，给推荐排序")` | 排序+理由 |
+| Step 3-6 任意点 | 角色扁平/对话空洞 | `use_skill("dialogue", task="诊断当前角色关系冲突与对话可能性")` | 对话/角色调性建议 |
+
+> 调用规则：Step 触发时主流程必须先 `use_skill` 获取诊断，再将结果纳入后续采集/生成；绝不可跳过诊断直接用默认值填充。
 
 ## 交互流程（Deep）
 
