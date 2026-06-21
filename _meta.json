@@ -2,5 +2,12 @@
   "ownerId": "local",
   "slug": "webnovel-writer",
   "version": "1.0.19",
-  "publishedAt": 1781943297775
+  "publishedAt": 1781943297775,
+  "dependencies": {
+    "jwynia-skills": {
+      "description": "10 个 jwynia 创作技法技能（必装，否则 use_skill 调用失败）",
+      "install": "bash scripts/install-jwynia-deps.sh",
+      "skills": ["story-idea-generator", "worldbuilding", "genre-conventions", "dialogue", "scene-sequencing", "plot-structure", "story-sense", "prose-style", "prose-critique", "revision"]
+    }
+  }
 }

@@ -127,10 +127,8 @@ class ReviewResult:
         return " | ".join(parts)
 
     def _calculate_overall_score(self) -> float:
-        score = 100.0
-        for issue in self.issues:
-            score -= _issue_penalty(issue)
-        return _clamp_score(score)
+        dims = self._build_dimension_scores()
+        return _clamp_score(sum(dims.values()) / len(dims))
 
     def to_dict(self) -> Dict[str, Any]:
         return {

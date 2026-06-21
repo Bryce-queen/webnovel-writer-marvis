@@ -29,6 +29,20 @@
 
 ## 依赖与安装
 
+**三步安装**（假定本目录已位于 Marvis 的 `skills/custom/webnovel-writer/`）：
+
+```
+1. 安装 jwynia 技法技能
+   $ bash scripts/install-jwynia-deps.sh
+
+2. 安装 Python 依赖
+   $ python -m pip install -r scripts/requirements.txt
+
+3. 重启 Marvis
+```
+
+> 第 1 步将 10 个 jwynia 创作技法技能（story-sense、worldbuilding、genre-conventions 等）写入 Marvis market 目录。若跳过，webnovel 管线中的 `use_skill` 调用将失败。
+
 Marvis 安装：将本目录放入 `skills/custom/webnovel-writer/`。
 
 Claude Code Marketplace 安装（原始平台）：
@@ -36,12 +50,6 @@ Claude Code Marketplace 安装（原始平台）：
 ```bash
 claude plugin marketplace add lingfengQAQ/webnovel-writer --scope user
 claude plugin install webnovel-writer@webnovel-writer-marketplace --scope user
-```
-
-Python 依赖：
-
-```bash
-python -m pip install -r scripts/requirements.txt
 ```
 
 RAG 检索需在书项目根目录配置 `.env`（缺失时自动退回 BM25 关键词检索）。详见 [RAG 与配置](../docs/guides/rag-and-config.md)。
